@@ -113,27 +113,41 @@ async function ensureLsLogin(force = false) {
 }
 
 async function fetchLsProducts() {
-  try {
-    await ensureLsLogin();
-    const r = await lsClient.get("/api/admin/products?page=1&pageSize=9999");
-    const raw = r.data?.items || r.data || [];
-    return (Array.isArray(raw) ? raw : []).map((p) => {
-      const thumb = absoluteLsUrl(p.mainImageThumbAbsoluteUrl || p.mainImageThumbUrl || p.mainImageThumb || "");
-      const main = absoluteLsUrl(p.mainImageAbsoluteUrl || p.mainImageUrl || p.mainImage || "");
-      return {
-        ...p,
-        mainImageThumbAbsoluteUrl: thumb,
-        mainImageAbsoluteUrl: main
-      };
-    });
-  } catch (err) {
-    if (err?.response?.status === 401) {
-      lsLoggedIn = false;
-      await ensureLsLogin(true);
-      return fetchLsProducts();
+  const pageSize = 100;
+  const maxPages = 500; // safety guard to avoid infinite loops
+  await ensureLsLogin();
+
+  const fetchPage = async (page) => {
+    try {
+      const r = await lsClient.get(`/api/admin/products?page=${page}&pageSize=${pageSize}`);
+      const raw = r.data?.items || r.data || [];
+      return Array.isArray(raw) ? raw : [];
+    } catch (err) {
+      if (err?.response?.status === 401) {
+        lsLoggedIn = false;
+        await ensureLsLogin(true);
+        return fetchPage(page);
+      }
+      throw err;
     }
-    throw err;
+  };
+
+  const all = [];
+  for (let page = 1; page <= maxPages; page += 1) {
+    const items = await fetchPage(page);
+    all.push(...items);
+    if (items.length < pageSize) break;
   }
+
+  return all.map((p) => {
+    const thumb = absoluteLsUrl(p.mainImageThumbAbsoluteUrl || p.mainImageThumbUrl || p.mainImageThumb || "");
+    const main = absoluteLsUrl(p.mainImageAbsoluteUrl || p.mainImageUrl || p.mainImage || "");
+    return {
+      ...p,
+      mainImageThumbAbsoluteUrl: thumb,
+      mainImageAbsoluteUrl: main
+    };
+  });
 }
 
 async function syncFromLightningShop() {
