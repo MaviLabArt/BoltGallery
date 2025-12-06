@@ -1,0 +1,23 @@
+# Environment files
+.env
+server/.env
+client/.env
+
+# Node modules
+node_modules
+client/node_modules
+server/node_modules
+
+# Builds / caches
+client/dist
+client/.vite
+client/.cache
+server/gallery.db
+
+# Logs / debug
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS / editor
+.DS_Store

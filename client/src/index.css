@@ -1,0 +1,94 @@
+@import "tailwindcss";
+@config "../tailwind.config.cjs";
+@source "../index.html";
+@source "./**/*.{js,jsx}";
+@source inline("rounded-3xl rounded-2xl rounded-xl bg-slate-900 bg-slate-950 ring-1 ring-2 ring-white/10 ring-white/15 ring-white/20 border-slate-800 border-slate-800/60 text-white/70 text-slate-300/80");
+
+:root {
+  color-scheme: dark;
+}
+
+:root {
+  --font-display: "Space Grotesk", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol";
+  --font-body: "Inter", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol";
+  --ct-accent: #6366f1;
+  --ct-accentSoft: rgba(99, 102, 241, 0.16);
+  --ct-surface: #0f172a;
+  --ct-surfaceAlt: #111827;
+  --ct-text: #e5e7eb;
+  --ct-muted: #94a3b8;
+  --ct-border: rgba(255, 255, 255, 0.08);
+}
+
+body {
+  font-family: var(--font-body);
+  background: #0b1020;
+}
+
+h1,h2,h3,h4,.heading {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+@layer utilities {
+  .ring-1 { --tw-ring-width: 2px; }
+  .ring-2 { --tw-ring-width: 3px; }
+}
+
+/* Skeletons */
+.skel { border-radius: 1.5rem; background-color: #0f172a; box-shadow: 0 0 0 1px rgba(255,255,255,0.1); overflow: hidden; }
+.skel-img { width: 100%; aspect-ratio: 4 / 3; background-color: #1e293b; }
+.skel-line { height: 1rem; border-radius: 0.25rem; background-color: #1e293b; }
+.skel-anim { background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.06), rgba(255,255,255,0)); background-size: 200% 100%; animation: skel 1.2s ease-in-out infinite; }
+@keyframes skel { 0%{background-position: 200% 0} 100%{background-position: -200% 0} }
+
+/* Theme: Ember Night */
+:root {
+  --em-bg: #0b1018;
+  --em-surface: #141a23;
+  --em-surface2: #1b2230;
+  --em-text: #f9fafb;
+  --em-muted: #cbd5f5;
+  --em-border: #1f2937;
+  --em-accent: #f97316;
+  --em-accent-soft: rgba(249, 115, 22, 0.09);
+}
+
+[data-theme='ember'] { color-scheme: dark; }
+[data-theme='ember'] body { background-color: var(--em-bg); color: var(--em-text); }
+[data-theme='ember'] .bg-slate-950 { background-color: var(--em-bg) !important; }
+[data-theme='ember'] .bg-slate-900 { background-color: var(--em-surface) !important; }
+[data-theme='ember'] .bg-slate-800 { background-color: var(--em-surface2) !important; }
+[data-theme='ember'] .ring-white\/10 { --tw-ring-color: var(--em-border) !important; }
+[data-theme='ember'] .text-white\/70 { color: rgba(255,255,255,0.78) !important; }
+
+/* Theme: Light Atelier */
+[data-theme='light'] { color-scheme: light; }
+[data-theme='light'] body { background-color: #f7f3ef; color: #1f1a17; }
+[data-theme='light'] .bg-slate-950 { background-color: #f7f3ef !important; color: #1f1a17; }
+[data-theme='light'] .bg-slate-900 { background-color: #efe8e2 !important; color: #1f1a17; }
+[data-theme='light'] .bg-slate-800 { background-color: #e6ddd5 !important; color: #1f1a17; }
+[data-theme='light'] .ring-white\/10 { --tw-ring-color: rgba(0,0,0,0.08) !important; }
+[data-theme='light'] .text-white\/70 { color: rgba(17, 10, 6, 0.7) !important; }
+
+/* Custom theme tokens */
+:root[data-theme='custom'] {
+  background-color: var(--ct-surface);
+  color: var(--ct-text);
+}
+:root[data-theme='custom'] body { background-color: var(--ct-surface); color: var(--ct-text); }
+
+/* Footer badge */
+.footer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
