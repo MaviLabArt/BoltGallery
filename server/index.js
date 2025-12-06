@@ -257,7 +257,13 @@ app.get("/api/admin/products", requireAdmin, async (req, res) => {
     }
     const list = Array.isArray(lsProducts) ? lsProducts : [];
     const merged = list.length > 0 ? listAdminProducts(list) : listCachedOnly();
-    res.json({ items: merged, total: merged.length });
+    const toProxied = (url = "") => proxify(url);
+    const items = merged.map((p) => ({
+      ...p,
+      mainImageThumbAbsoluteUrl: toProxied(p.mainImageThumbAbsoluteUrl),
+      mainImageAbsoluteUrl: toProxied(p.mainImageAbsoluteUrl)
+    }));
+    res.json({ items, total: items.length });
   } catch (err) {
     res.status(500).json({ error: err?.message || "Unable to load products" });
   }
