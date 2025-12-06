@@ -1,5 +1,7 @@
 import "dotenv/config";
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 import morgan from "morgan";
 import cookieSession from "cookie-session";
 import axios from "axios";
@@ -17,6 +19,7 @@ import {
 import { makeCors } from "./middleware.js";
 
 const app = express();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.set("trust proxy", 1);
 
 // ---------------------------------------------------------------------------
@@ -251,6 +254,13 @@ app.put("/api/admin/settings", requireAdmin, (req, res) => {
 // ---------------------------------------------------------------------------
 // Fallback
 // ---------------------------------------------------------------------------
+const clientDist = path.resolve(__dirname, "../client/dist");
+app.use(express.static(clientDist));
+app.get("*", (req, res, next) => {
+  if (req.path.startsWith("/api")) return next();
+  res.sendFile(path.join(clientDist, "index.html"));
+});
+
 app.use((req, res) => res.status(404).json({ error: "Not found" }));
 
 app.listen(PORT, () => {

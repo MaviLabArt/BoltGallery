@@ -13,6 +13,7 @@ client/dist
 client/.vite
 client/.cache
 server/gallery.db
+ecosystem.config.local.cjs
 
 # Logs / debug
 npm-debug.log*
