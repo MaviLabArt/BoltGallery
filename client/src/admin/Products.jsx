@@ -14,7 +14,17 @@ export default function Products() {
       setLoading(true);
       const r = await api.get("/admin/products");
       const list = Array.isArray(r.data?.items) ? r.data.items : [];
-      setItems(list.sort((a, b) => (b.sortOrder || 0) - (a.sortOrder || 0)));
+      // Ensure images go through our proxy when coming from Lightning Shop
+      const mapped = list.map((p) => ({
+        ...p,
+        mainImageThumbAbsoluteUrl: p.mainImageThumbAbsoluteUrl
+          ? `/api/gallery/proxy?u=${encodeURIComponent(p.mainImageThumbAbsoluteUrl)}`
+          : p.mainImageThumbAbsoluteUrl,
+        mainImageAbsoluteUrl: p.mainImageAbsoluteUrl
+          ? `/api/gallery/proxy?u=${encodeURIComponent(p.mainImageAbsoluteUrl)}`
+          : p.mainImageAbsoluteUrl
+      }));
+      setItems(mapped.sort((a, b) => (b.sortOrder || 0) - (a.sortOrder || 0)));
       setError("");
     } catch (err) {
       setError("Unable to load products");
