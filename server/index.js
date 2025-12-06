@@ -198,7 +198,7 @@ app.get("/api/gallery/:id/images", async (req, res) => {
 });
 
 // Proxy Lightning Shop images to avoid mixed-content issues behind HTTPS
-app.get("/api/gallery/proxy", async (req, res) => {
+async function proxyImage(req, res) {
   const raw = String(req.query.u || "").trim();
   if (!raw) return res.status(400).json({ error: "Missing url" });
   const abs = absoluteLsUrl(raw);
@@ -215,7 +215,9 @@ app.get("/api/gallery/proxy", async (req, res) => {
     const status = err?.response?.status || 502;
     res.status(status).json({ error: "Proxy failed" });
   }
-});
+}
+app.get("/api/gallery/proxy", proxyImage);
+app.get("/gallery/proxy", proxyImage); // tolerate missing /api prefix when linked manually
 
 // ---------------------------------------------------------------------------
 // Admin API
