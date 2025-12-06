@@ -35,6 +35,37 @@ export default function Gallery() {
   const title = titleRaw.trim();
   const subtitle = subtitleRaw.trim();
 
+  useEffect(() => {
+    if (!settings) return;
+    const metaList = [
+      ["og:title", title || settings.storeName || "Gallery"],
+      ["og:description", subtitle || "Curated art"],
+      ["twitter:title", title || settings.storeName || "Gallery"],
+      ["twitter:description", subtitle || "Curated art"],
+      ["twitter:card", "summary_large_image"]
+    ];
+
+    const img = absoluteApiUrl(heroLogo || settings.logoDark || settings.logoLight || "");
+    if (img) {
+      metaList.push(["og:image", img], ["twitter:image", img]);
+    }
+
+    metaList.forEach(([name, content]) => {
+      if (!content) return;
+      let el = document.querySelector(`meta[property="${name}"]`) || document.querySelector(`meta[name="${name}"]`);
+      if (!el) {
+        el = document.createElement("meta");
+        if (name.startsWith("og:") || name.startsWith("twitter:")) {
+          el.setAttribute("property", name);
+        } else {
+          el.setAttribute("name", name);
+        }
+        document.head.appendChild(el);
+      }
+      el.setAttribute("content", content);
+    });
+  }, [settings, title, subtitle, heroLogo]);
+
   async function openItem(item) {
     const main = absoluteApiUrl(item.mainImageUrl || item.mainImageThumbUrl || "");
     // Keep the lightbox closed until we have at least one image to avoid flash/flicker.
