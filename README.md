@@ -18,3 +18,5 @@ A minimal gallery companion for BoltCanvas. It mirrors the BoltCanvas items (eve
    cd ../client && npm run dev
    ```
    The client proxies `/api` to the server by default (port 9090).
+
+4. Visit http://127.0.0.1:5174
