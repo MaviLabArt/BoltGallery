@@ -148,9 +148,9 @@ async function syncFromLightningShop() {
 }
 
 function proxify(url = "") {
-  const src = String(url || "").trim();
-  if (!src) return "";
-  return `/api/gallery/proxy?u=${encodeURIComponent(src)}`;
+  const abs = absoluteLsUrl(url);
+  if (!abs) return "";
+  return `/api/gallery/proxy?u=${encodeURIComponent(abs)}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -200,10 +200,12 @@ app.get("/api/gallery/:id/images", async (req, res) => {
 app.get("/api/gallery/proxy", async (req, res) => {
   const raw = String(req.query.u || "").trim();
   if (!raw) return res.status(400).json({ error: "Missing url" });
+  const abs = absoluteLsUrl(raw);
+  if (!abs) return res.status(400).json({ error: "Invalid url" });
   // Only allow proxying the configured Lightning Shop base
-  if (!raw.startsWith(LS_BASE)) return res.status(403).json({ error: "Forbidden" });
+  if (!abs.startsWith(LS_BASE)) return res.status(403).json({ error: "Forbidden" });
   try {
-    const rsp = await axios.get(raw, { responseType: "arraybuffer" });
+    const rsp = await axios.get(abs, { responseType: "arraybuffer" });
     const ct = rsp.headers["content-type"] || "image/jpeg";
     res.setHeader("Content-Type", ct);
     res.setHeader("Cache-Control", "public, max-age=86400, immutable");
