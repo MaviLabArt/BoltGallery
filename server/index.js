@@ -147,6 +147,12 @@ async function syncFromLightningShop() {
   return list;
 }
 
+function proxify(url = "") {
+  const src = String(url || "").trim();
+  if (!src) return "";
+  return `/api/gallery/proxy?u=${encodeURIComponent(src)}`;
+}
+
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
@@ -157,7 +163,12 @@ app.get("/api/public/settings", (req, res) => {
 });
 
 app.get("/api/public/gallery", (req, res) => {
-  res.json(listPublic());
+  const list = listPublic().map((p) => ({
+    ...p,
+    mainImageThumbUrl: proxify(p.mainImageThumbUrl),
+    mainImageUrl: proxify(p.mainImageUrl)
+  }));
+  res.json(list);
 });
 
 // Expose all images for a product (pulled from Lightning Shop admin API) so the gallery can show full view.
@@ -178,10 +189,28 @@ app.get("/api/gallery/:id/images", async (req, res) => {
       return [];
     })();
     const title = data.title || "";
-    res.json({ images: absUrls, title });
+    res.json({ images: absUrls.map(proxify), title });
   } catch (err) {
     const status = err?.response?.status || 500;
     res.status(status).json({ error: err?.message || "Unable to load images" });
+  }
+});
+
+// Proxy Lightning Shop images to avoid mixed-content issues behind HTTPS
+app.get("/api/gallery/proxy", async (req, res) => {
+  const raw = String(req.query.u || "").trim();
+  if (!raw) return res.status(400).json({ error: "Missing url" });
+  // Only allow proxying the configured Lightning Shop base
+  if (!raw.startsWith(LS_BASE)) return res.status(403).json({ error: "Forbidden" });
+  try {
+    const rsp = await axios.get(raw, { responseType: "arraybuffer" });
+    const ct = rsp.headers["content-type"] || "image/jpeg";
+    res.setHeader("Content-Type", ct);
+    res.setHeader("Cache-Control", "public, max-age=86400, immutable");
+    res.send(Buffer.from(rsp.data));
+  } catch (err) {
+    const status = err?.response?.status || 502;
+    res.status(status).json({ error: "Proxy failed" });
   }
 });
 
