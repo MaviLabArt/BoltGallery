@@ -40,7 +40,8 @@ export default function Settings() {
     logoLight: "",
     favicon: "",
     themeChoice: "dark",
-    themeTokens: { ...DEFAULT_THEME_TOKENS }
+    themeTokens: { ...DEFAULT_THEME_TOKENS },
+    galleryColumns: "auto"
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -54,7 +55,8 @@ export default function Settings() {
         ...data,
         logoDark: data.logoDark || data.logo || "",
         logoLight: data.logoLight || "",
-        themeTokens: mergeThemeTokens(data.themeTokens)
+        themeTokens: mergeThemeTokens(data.themeTokens),
+        galleryColumns: data.galleryColumns || "auto"
       }));
       setLoading(false);
     }).catch(() => setLoading(false));
@@ -202,6 +204,23 @@ export default function Settings() {
             </button>
           </div>
         )}
+      </div>
+
+      {/* Gallery layout */}
+      <div className="space-y-2">
+        <div className="text-lg font-semibold">Gallery layout (desktop)</div>
+        <select
+          className="w-full px-4 py-3 rounded-2xl bg-slate-950 ring-1 ring-white/10"
+          value={s.galleryColumns}
+          onChange={(e) => setS((prev) => ({ ...prev, galleryColumns: e.target.value }))}
+        >
+          <option value="auto">Auto (3 columns)</option>
+          <option value="two">2 per row</option>
+          <option value="one">1 per row (large)</option>
+        </select>
+        <div className="text-xs text-white/60">
+          Affects desktop/tablet only; mobile stays stacked.
+        </div>
       </div>
 
       <div className="flex items-center gap-3">

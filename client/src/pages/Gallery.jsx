@@ -80,6 +80,13 @@ export default function Gallery() {
     setLightbox({ open: true, item, images, loading: false });
   }
 
+  const gridClasses = (() => {
+    const mode = settings?.galleryColumns || "auto";
+    if (mode === "two") return "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-5";
+    if (mode === "one") return "grid grid-cols-1 gap-5 md:max-w-3xl mx-auto";
+    return "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5";
+  })();
+
   return (
     <section className="pt-10">
       <div className="text-center mb-10">
@@ -117,7 +124,7 @@ export default function Gallery() {
           No pieces are visible yet. Enable items from the admin.
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+        <div className={gridClasses}>
           {items.map((item) => (
             <button
               key={item.id}

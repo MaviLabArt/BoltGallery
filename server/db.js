@@ -63,7 +63,8 @@ export function getSettings() {
     "logoLight",
     "favicon",
     "themeChoice",
-    "themeTokens"
+    "themeTokens",
+    "galleryColumns"
   ];
   const map = {};
   keys.forEach((k) => {
@@ -90,7 +91,8 @@ export function getSettings() {
     logoLight: map.logoLight || "",
     favicon: map.favicon || "",
     themeChoice: map.themeChoice || "dark",
-    themeTokens
+    themeTokens,
+    galleryColumns: map.galleryColumns || "auto"
   };
 }
 
@@ -113,6 +115,7 @@ export function setSettings(patch = {}) {
   if (patch.themeTokens !== undefined) {
     apply("themeTokens", patch.themeTokens);
   }
+  apply("galleryColumns", patch.galleryColumns);
 
   return getSettings();
 }
