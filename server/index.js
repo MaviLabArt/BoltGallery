@@ -148,7 +148,11 @@ async function syncFromLightningShop() {
 }
 
 function proxify(url = "") {
-  const abs = absoluteLsUrl(url);
+  const raw = String(url || "").trim();
+  if (!raw) return "";
+  // Avoid double-proxying if already proxied
+  if (raw.includes("/gallery/proxy")) return raw;
+  const abs = absoluteLsUrl(raw);
   if (!abs) return "";
   // Return path without duplicating /api; client will prepend base (/api) via absoluteApiUrl
   return `/gallery/proxy?u=${encodeURIComponent(abs)}`;
