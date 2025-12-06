@@ -256,9 +256,9 @@ app.put("/api/admin/settings", requireAdmin, (req, res) => {
 // ---------------------------------------------------------------------------
 const clientDist = path.resolve(__dirname, "../client/dist");
 app.use(express.static(clientDist));
-app.get("*", (req, res, next) => {
+app.use((req, res, next) => {
   if (req.path.startsWith("/api")) return next();
-  res.sendFile(path.join(clientDist, "index.html"));
+  return res.sendFile(path.join(clientDist, "index.html"));
 });
 
 app.use((req, res) => res.status(404).json({ error: "Not found" }));
