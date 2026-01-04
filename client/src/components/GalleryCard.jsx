@@ -26,14 +26,19 @@ export default function GalleryCard({ item }) {
           animate={reduce ? { opacity: 1 } : {}}
         />
         <div className="absolute inset-0 flex items-end">
-          <div className="w-full p-4">
+          <div className="w-full p-5">
             <motion.div
               initial={false}
-              animate={reduce ? {} : { y: 6, opacity: 0.95 }}
+              animate={reduce ? {} : { y: 4, opacity: 0 }}
               whileHover={reduce ? {} : { y: 0, opacity: 1 }}
-              className="font-semibold text-lg drop-shadow-sm"
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              className="inline-block"
             >
-              {item.title || "Untitled"}
+              <div className="backdrop-blur-xl bg-black/40 rounded-[20px] px-[18px] py-2 border border-white/10 shadow-2xl">
+                <h3 className="font-normal text-[13px] tracking-[0.15em] uppercase text-white/95 leading-[1.4]" style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.5)' }}>
+                  {item.title || "Untitled"}
+                </h3>
+              </div>
             </motion.div>
           </div>
         </div>
